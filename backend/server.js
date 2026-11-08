@@ -41,10 +41,18 @@ const isAdmin = (req, res, next) => {
 
 // --- AUTH ROUTES ---
 app.post('/api/register', async (req, res) => {
-    const { name, email, student_id, password, role } = req.body;
+    const { name, email, student_id, password, role, admin_code } = req.body;
     try {
+        // Admin accounts need the invite code from the server settings
+        let userRole = 'student';
+        if (role === 'admin') {
+            const inviteCode = process.env.ADMIN_INVITE_CODE;
+            if (!inviteCode || admin_code !== inviteCode) {
+                return res.status(403).json({ error: 'Invalid admin invite code' });
+            }
+            userRole = 'admin';
+        }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const userRole = role === 'admin' ? 'admin' : 'student'; // basic role setting
 
         db.run(`INSERT INTO users (name, email, student_id, password_hash, role) VALUES (?, ?, ?, ?, ?)`,
             [name, email, student_id, hashedPassword, userRole],
