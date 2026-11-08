@@ -39,13 +39,6 @@ export default function Register() {
                         <label>Password</label>
                         <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
                     </div>
-                    <div className="form-group">
-                        <label>Role</label>
-                        <select value={formData.role} onChange={e => setFormData({...formData, role: e.target.value})}>
-                            <option value="student">Student</option>
-                            <option value="admin">Administrator</option>
-                        </select>
-                    </div>
                     <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem' }}>Register</button>
                 </form>
                 <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.875rem' }}>
