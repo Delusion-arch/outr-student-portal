@@ -351,7 +351,11 @@ app.get('/api/stats', authenticate, isAdmin, (req, res) => {
     });
 });
 
-// Start Server
-app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-});
+// Start the server only when run directly, so tests can import the app
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
