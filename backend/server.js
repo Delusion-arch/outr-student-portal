@@ -1,3 +1,4 @@
+require('dotenv').config({ quiet: true });
 const express = require('express');
 const cors = require('cors');
 const bcrypt = require('bcryptjs');
@@ -8,7 +9,11 @@ const { sendEmail } = require('./mailer');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const SECRET_KEY = 'your_super_secret_key_change_in_production'; // Simple secret for this project
+const SECRET_KEY = process.env.JWT_SECRET;
+if (!SECRET_KEY) {
+    console.error('JWT_SECRET is not set. Copy backend/.env.example to backend/.env and set it.');
+    process.exit(1);
+}
 
 app.use(cors());
 app.use(express.json());
