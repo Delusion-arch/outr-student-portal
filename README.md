@@ -5,7 +5,7 @@
 
 A web portal where students browse courses and request enrollment, and teachers approve requests, take attendance and look at course analytics.
 
-I built it because enrollment at our college runs on paper forms and scattered messages, and nobody can see at a glance who is enrolled where or how many seats are left. This is my attempt at a simple version of that process, end to end: a React frontend, an Express API, and a SQLite database.
+It is a full-stack college project: a React frontend, an Express API and a SQLite database, covering the whole flow from sign-up to approved enrollment and attendance.
 
 | Admin: enrollment requests | Student: course catalog |
 |---|---|
