@@ -4,6 +4,7 @@ services:
     environment:
       PORT: 5000
       JWT_SECRET: ${JWT_SECRET:?Set JWT_SECRET in a .env file next to this compose file}
+      ADMIN_INVITE_CODE: ${ADMIN_INVITE_CODE:-}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost:8080}
       DB_PATH: /app/data/database.sqlite
       SMTP_HOST: ${SMTP_HOST:-}
