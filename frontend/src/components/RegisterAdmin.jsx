@@ -3,7 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import api from '../api';
 
 export default function RegisterAdmin() {
-    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'admin' });
+    const [formData, setFormData] = useState({ name: '', email: '', password: '', role: 'admin', admin_code: '' });
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
@@ -35,6 +35,10 @@ export default function RegisterAdmin() {
                     <div className="form-group">
                         <label>Secure Password</label>
                         <input type="password" value={formData.password} onChange={e => setFormData({...formData, password: e.target.value})} required />
+                    </div>
+                    <div className="form-group">
+                        <label>Admin Invite Code</label>
+                        <input type="password" value={formData.admin_code} onChange={e => setFormData({...formData, admin_code: e.target.value})} required />
                     </div>
                     <button type="submit" className="btn-primary" style={{ width: '100%', marginTop: '1rem', background: 'var(--warning)', color: 'black' }}>Register Admin</button>
                 </form>
