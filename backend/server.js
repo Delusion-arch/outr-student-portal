@@ -15,7 +15,11 @@ if (!SECRET_KEY) {
     process.exit(1);
 }
 
-app.use(cors());
+// Only the configured frontend(s) may call the API from a browser
+const allowedOrigins = (process.env.FRONTEND_URL || 'http://localhost:5173')
+    .split(',')
+    .map((o) => o.trim());
+app.use(cors({ origin: allowedOrigins }));
 app.use(express.json());
 
 // Middleware for auth
