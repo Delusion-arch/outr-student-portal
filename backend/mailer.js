@@ -1,26 +1,37 @@
 const nodemailer = require('nodemailer');
 
-// For local testing, we use Ethereal Email which generates a fake inbox.
-// When you deploy to production, replace these credentials with a real SMTP service (e.g., Gmail, SendGrid)
+// Mail settings come from environment variables (see .env.example).
+// If SMTP_HOST is not set, fall back to an Ethereal test inbox so the app
+// still works in development. Nothing is delivered to real addresses then.
 let transporter;
+let mailFrom = process.env.MAIL_FROM || '"Student Registration System" <admin@outr.ac.in>';
 
 async function initMailer() {
-    // Generate a test account if no real credentials are provided
-    let testAccount = await nodemailer.createTestAccount();
-
-    transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: 587,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: testAccount.user, // generated ethereal user
-            pass: testAccount.pass, // generated ethereal password
-        },
-    });
-    
-    console.log("Mailer initialized with Ethereal Email for testing.");
-    console.log("Email User:", testAccount.user);
-    console.log("Email Pass:", testAccount.pass);
+    try {
+        if (process.env.SMTP_HOST) {
+            transporter = nodemailer.createTransport({
+                host: process.env.SMTP_HOST,
+                port: Number(process.env.SMTP_PORT) || 587,
+                secure: process.env.SMTP_SECURE === 'true',
+                auth: {
+                    user: process.env.SMTP_USER,
+                    pass: process.env.SMTP_PASS,
+                },
+            });
+            console.log('Mailer ready (SMTP).');
+        } else {
+            const testAccount = await nodemailer.createTestAccount();
+            transporter = nodemailer.createTransport({
+                host: 'smtp.ethereal.email',
+                port: 587,
+                secure: false,
+                auth: { user: testAccount.user, pass: testAccount.pass },
+            });
+            console.log('Mailer ready (Ethereal test inbox, emails are not delivered).');
+        }
+    } catch (err) {
+        console.error('Mailer could not start, emails are disabled:', err.message);
+    }
 }
 
 initMailer();
@@ -33,16 +44,17 @@ async function sendEmail(to, subject, text) {
 
     try {
         let info = await transporter.sendMail({
-            from: '"Student Registration System" <admin@outr.ac.in>', 
+            from: mailFrom,
             to: to, // list of receivers
             subject: subject, 
             text: text, 
             html: `<p>${text}</p>`, // html body
         });
 
-        console.log("Message sent: %s", info.messageId);
-        // Preview only available when sending through an Ethereal account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+        console.log('Message sent: %s', info.messageId);
+        // Only returns a URL when sending through an Ethereal test account
+        const preview = nodemailer.getTestMessageUrl(info);
+        if (preview) console.log('Preview URL: %s', preview);
     } catch (err) {
         console.error("Error sending email:", err);
     }
